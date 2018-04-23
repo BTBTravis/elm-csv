@@ -9,12 +9,26 @@ import Debug exposing (log, crash)
 
 suite : Test
 suite =
-    describe "CSV Parser"
-        [ describe "Basic"
-            [ test "Csv.parse" <|
-                \_ -> Expect.equal { headers = [ "id", "value" ], records = [ [ "1", "one" ], [ "2", "two" ] ] } (Csv.parse "id,value\n,1,one\n,2,two\n")
-            , test "Csv.parseWith" <|
+    describe "CSV"
+        [ describe "Csv.parse"
+            [ test "Convert a string of comma-separated values into a `Csv` structure." <|
+                \_ -> Expect.equal { headers = [ "id", "value" ], records = [ [ "1", "one" ], [ "2", "two" ] ] } (Csv.parse "id,value\n1,one\n2,two\n")
+            , test "Values that contain the character ',' can be quoted" <|
+                \_ -> Expect.equal { headers = [ "id", "value" ], records = [ [ "1,2,3", "one,two,three" ] ] } (Csv.parse "id,value\n\"1,2,3\",\"one,two,three\"\n")
+            , test "Double quotes can be escaped with a backslash or a second quote" <|
+                \_ -> Expect.equal { headers = [ "value" ], records = [ [ "Here is a quote:\"" ], [ "Another one:\"" ] ] } (Csv.parse "value\n,Here is a quote:\"\"\nAnother one:\\\"\n")
+            ]
+        , describe "Csv.parseWith"
+            [ test "Convert a string of values separated by a *separator* into a `Csv` structure." <|
                 \_ -> Expect.equal { headers = [ "id", "value" ], records = [ [ "1", "one" ], [ "2", "two" ] ] } (Csv.parseWith ";" "id;value\n;1;one\n;2;two\n")
+            ]
+        , describe "Csv.split"
+            [ test "Convert a string of comma-separated values into a list of lists." <|
+                \_ -> Expect.equal [ [ "id", "value" ], [ "1", "one" ], [ "2", "two" ] ] (Csv.split "id,value\n1,one\n2,two\n")
+            ]
+        , describe "Csv.splitWith"
+            [ test "Convert a string of values separated by a character into a list of lists." <|
+                \_ -> Expect.equal [ [ "id", "value" ], [ "1", "one" ], [ "2", "two" ] ] (Csv.splitWith "," "id,value\n1,one\n2,two\n")
             ]
         , describe "Value parsing"
             [ test "Empty input" <|
@@ -39,7 +53,7 @@ suite =
                 \_ -> Expect.equal { headers = [ "a", "b", "c" ], records = [ [ "d", "e", "f" ], [ "g", "h", "i" ] ] } (Csv.parse "a,b,c\nd,e,f\ng,h,i\n")
             , test "CR only" <|
                 \_ -> Expect.equal { headers = [ "a", "b", "c" ], records = [ [ "d", "e", "f" ], [ "g", "h", "i" ] ] } (Csv.parse "a,b,cÝ,e,f\x0Dg,h,i\x0D")
-            , test "CR only" <|
+            , test "CR only 2" <|
                 \_ -> Expect.equal { headers = [ "a", "b", "c" ], records = [ [ "d", "e", "f" ], [ "g", "h", "i" ] ] } (Csv.parse "a,b,c\x0D\nd,e,f\x0D\ng,h,i\x0D\n")
             , test "Mixed" <|
                 \_ -> Expect.equal { headers = [ "a", "b", "c" ], records = [ [ "d", "e", "f" ], [ "g", "h", "i" ] ] } (Csv.parse "a,b,cÝ,e,f\ng,h,i\x0D\n")
