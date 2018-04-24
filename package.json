@@ -6,11 +6,10 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "elm-doc-test && elm-test init && elm-test tests/Doc/Main.elm"
+    "test": "elm-test"
   },
   "devDependencies": {
     "elm": "^0.18.0",
-    "elm-doc-test": "^2.2.3",
     "elm-test": "^0.18.2"
   }
 }
