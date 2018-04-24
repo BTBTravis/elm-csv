@@ -32,10 +32,5 @@ cache:
     - cd ..
 
   script:
-    - elm-format --validate src tests examples readme-example
-    - cd examples
-    - elm-make --output=/dev/null --yes
-    - cd ../readme-example
-    - elm-make --output=/dev/null --yes
-    - cd ..
+    - elm-format --validate src tests 
     - npm test
