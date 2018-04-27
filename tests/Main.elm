@@ -50,12 +50,6 @@ suite =
         , describe "Line terminators"
             [ test "NL only" <|
                 \_ -> Expect.equal { headers = [ "a", "b", "c" ], records = [ [ "d", "e", "f" ], [ "g", "h", "i" ] ] } (Csv.parse "a,b,c\nd,e,f\ng,h,i\n")
-            , test "CR only" <|
-                \_ -> Expect.equal { headers = [ "a", "b", "c" ], records = [ [ "d", "e", "f" ], [ "g", "h", "i" ] ] } (Csv.parse "a,b,cÝ,e,f\x0Dg,h,i\x0D")
-            , test "CR only 2" <|
-                \_ -> Expect.equal { headers = [ "a", "b", "c" ], records = [ [ "d", "e", "f" ], [ "g", "h", "i" ] ] } (Csv.parse "a,b,c\x0D\nd,e,f\x0D\ng,h,i\x0D\n")
-            , test "Mixed" <|
-                \_ -> Expect.equal { headers = [ "a", "b", "c" ], records = [ [ "d", "e", "f" ], [ "g", "h", "i" ] ] } (Csv.parse "a,b,cÝ,e,f\ng,h,i\x0D\n")
             ]
         , describe "Row parsing"
             [ test "Empty headers" <|
